@@ -61,10 +61,10 @@ export function CompatibilityResult({ result, onReset }: Props) {
           className="glass-panel p-8"
         >
           <div className="flex items-center gap-3 mb-6 border-b border-white/5 pb-4">
-             <Star className="w-5 h-5 text-brand-gold" />
+             <Star className="w-5 h-5 text-brand-orange" />
              <h2 className="text-xl font-display font-bold text-white uppercase tracking-wider">Thông Số Đối Chiếu</h2>
           </div>
-          <div className="prose prose-invert max-w-none prose-sm lg:prose-base">
+          <div className="prose prose-invert max-w-none prose-sm lg:prose-base text-white">
             <Markdown>{result.aiInterpretation.comparisonTable}</Markdown>
           </div>
         </motion.div>
@@ -99,7 +99,7 @@ export function CompatibilityResult({ result, onReset }: Props) {
                <ShieldCheck className="w-6 h-6 text-emerald-500" />
                <h2 className="text-xl font-display font-bold text-white uppercase">Sự Tương Hợp</h2>
             </div>
-            <div className="prose prose-invert max-w-none text-white/70">
+            <div className="prose prose-invert max-w-none text-white">
               <Markdown>{result.aiInterpretation.compatibilityAnalysis}</Markdown>
             </div>
           </motion.div>
@@ -113,7 +113,7 @@ export function CompatibilityResult({ result, onReset }: Props) {
                <AlertTriangle className="w-6 h-6 text-rose-500" />
                <h2 className="text-xl font-display font-bold text-white uppercase">Xung Khắc Cần Lưu Ý</h2>
             </div>
-            <div className="prose prose-invert max-w-none text-white/70">
+            <div className="prose prose-invert max-w-none text-white">
               <Markdown>{result.aiInterpretation.conflicts}</Markdown>
             </div>
           </motion.div>
@@ -126,10 +126,10 @@ export function CompatibilityResult({ result, onReset }: Props) {
           className="glass-panel p-8 border-brand-gold/10 bg-brand-gold/[0.02]"
         >
           <div className="flex items-center gap-3 mb-6">
-             <Lightbulb className="w-6 h-6 text-brand-gold" />
+             <Lightbulb className="w-6 h-6 text-brand-orange" />
              <h2 className="text-xl font-display font-bold text-white uppercase">Giải Pháp & Hóa Giải</h2>
           </div>
-          <div className="prose prose-invert max-w-none text-white/70">
+          <div className="prose prose-invert max-w-none text-white">
             <Markdown>{result.aiInterpretation.solutions}</Markdown>
           </div>
         </motion.div>
@@ -142,7 +142,7 @@ export function CompatibilityResult({ result, onReset }: Props) {
           >
             <RefreshCcw className="w-5 h-5" /> Trở Lại
           </button>
-          <button className="flex items-center gap-2 px-8 py-4 bg-brand-gold text-black font-bold rounded-xl hover:scale-105 transition-all">
+          <button className="flex items-center gap-2 px-8 py-4 bg-brand-orange text-black font-bold rounded-xl hover:scale-105 transition-all shadow-lg shadow-brand-orange/20">
             <Share2 className="w-5 h-5" /> Lưu & Chia Sẻ
           </button>
         </div>
