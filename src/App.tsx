@@ -102,7 +102,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen font-sans selection:bg-brand-gold/30 selection:text-brand-gold bg-brand-black text-white">
+    <div className="min-h-screen font-sans selection:bg-brand-orange/30 selection:text-brand-orange bg-brand-black text-white">
       {loading && <LoadingScreen />}
       
       {!loading && !result && !compResult && (
@@ -114,13 +114,13 @@ export default function App() {
             <div className="max-w-7xl mx-auto flex flex-col items-center gap-8">
               <div className="flex flex-col items-center">
                 <Logo className="scale-75 md:scale-90" />
-                <div className="w-12 h-0.5 bg-brand-gold/30 mt-4 rounded-full" />
+                <div className="w-12 h-0.5 bg-brand-orange/30 mt-4 rounded-full" />
               </div>
 
               <nav className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/5 subtle-glow">
                 <button 
                   onClick={() => setMode('single')}
-                  className={`flex items-center gap-2 px-8 py-3 rounded-xl transition-all ${mode === 'single' ? 'bg-brand-gold text-black gold-glow' : 'text-white/60 hover:bg-white/5'}`}
+                  className={`flex items-center gap-2 px-8 py-3 rounded-xl transition-all ${mode === 'single' ? 'bg-brand-orange text-black gold-glow' : 'text-white/60 hover:bg-white/5'}`}
                 >
                   <User className="w-4 h-4" /> Cá Nhân
                 </button>
