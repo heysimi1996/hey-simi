@@ -35,7 +35,7 @@ export function CompatibilityForm({ onAnalyze }: Props) {
             person.gender === g 
               ? g === 'LGBT+' 
                 ? 'lgbt-gradient-border text-white' 
-                : 'bg-brand-gold/10 border-brand-gold text-brand-gold' 
+                : 'bg-brand-orange/10 border-brand-orange text-brand-orange' 
               : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
           }`}
         >
