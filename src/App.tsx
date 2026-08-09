@@ -1,45 +1,47 @@
-import React from 'react';
-import { UserInput, AnalysisResult as AnalysisResultType, CompatibilityResult as CompatibilityResultType } from './types';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Sparkles, Heart, RefreshCw, Compass, Shield, Eye } from 'lucide-react';
+import { Logo } from './components/Logo';
 import { InputForm } from './components/InputForm';
-import { LoadingScreen } from './components/LoadingScreen';
 import { AnalysisResult } from './components/AnalysisResult';
 import { CompatibilityForm } from './components/CompatibilityForm';
 import { CompatibilityResult } from './components/CompatibilityResult';
+import { LoadingScreen } from './components/LoadingScreen';
+import { UserInput, NumerologyData, AnalysisResult as AnalysisResultType, CompatibilityResult as CompatibilityResultType } from './types';
 import { 
   calculateLifePath, 
   calculateNameNumbers, 
   generateBirthChart, 
   analyzeArrows, 
   calculatePersonalYear, 
-  calculatePyramids,
+  calculatePyramids, 
   calculateElement,
-  reduceNumber
+  reduceNumber 
 } from './lib/numerology';
 import { interpretNumerology, interpretCompatibility } from './lib/gemini';
-import { User, Users, Heart } from 'lucide-react';
-import { Logo } from './components/Logo';
 
 export default function App() {
-  const [loading, setLoading] = React.useState(false);
-  const [mode, setMode] = React.useState<'single' | 'compatibility'>('single');
-  const [result, setResult] = React.useState<AnalysisResultType | null>(null);
-  const [compResult, setCompResult] = React.useState<CompatibilityResultType | null>(null);
+  const [mode, setMode] = useState<'single' | 'compatibility'>('single');
+  const [loading, setLoading] = useState<boolean>(false);
+  const [analysisResult, setAnalysisResult] = useState<AnalysisResultType | null>(null);
+  const [compatibilityResult, setCompatibilityResult] = useState<CompatibilityResultType | null>(null);
 
-  const calculateFullNumerology = (input: UserInput) => {
-    const lp = calculateLifePath(input.birthDate);
-    const { destiny, soulUrge, innerSelf } = calculateNameNumbers(input.fullName);
+  const computeNumerologyData = (input: UserInput): NumerologyData => {
+    const lifePath = calculateLifePath(input.birthDate);
+    const nameData = calculateNameNumbers(input.fullName);
     const birthChart = generateBirthChart(input.birthDate);
     const arrows = analyzeArrows(birthChart);
     const personalYear = calculatePersonalYear(input.birthDate);
     const pyramids = calculatePyramids(input.birthDate);
     const elementData = calculateElement(input.birthDate);
+    const maturity = reduceNumber(lifePath + nameData.destiny, true);
 
     return {
-      lifePath: lp,
-      destiny,
-      soulUrge,
-      innerSelf,
-      maturity: reduceNumber(lp + destiny, true),
+      lifePath,
+      destiny: nameData.destiny,
+      soulUrge: nameData.soulUrge,
+      innerSelf: nameData.innerSelf,
+      maturity,
       birthChart,
       arrows,
       personalYear,
@@ -48,113 +50,176 @@ export default function App() {
     };
   };
 
-  const startAnalysis = async (input: UserInput) => {
-    if (!input.birthDate || !input.fullName) return;
+  const handleStartAnalysis = async (input: UserInput) => {
     setLoading(true);
-
     try {
-      const numerologyData = calculateFullNumerology(input);
-      const aiResultPromise = interpretNumerology(input, numerologyData);
-      const delayPromise = new Promise(resolve => setTimeout(resolve, 8000));
+      const numerologyData = computeNumerologyData(input);
+      const aiResult = await interpretNumerology(input, numerologyData);
 
-      const [aiResult] = await Promise.all([aiResultPromise, delayPromise]);
-
-      setResult({
+      setAnalysisResult({
         input,
         numerology: numerologyData,
         aiInterpretation: aiResult
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Analysis Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const startCompatibilityAnalysis = async (p1: UserInput, p2: UserInput) => {
+  const handleAnalyzeCompatibility = async (p1: UserInput, p2: UserInput) => {
     setLoading(true);
     try {
-      const d1 = calculateFullNumerology(p1);
-      const d2 = calculateFullNumerology(p2);
-      
-      const aiResultPromise = interpretCompatibility(p1, d1, p2, d2);
-      const delayPromise = new Promise(resolve => setTimeout(resolve, 8000));
+      const d1 = computeNumerologyData(p1);
+      const d2 = computeNumerologyData(p2);
 
-      const [aiResult] = await Promise.all([aiResultPromise, delayPromise]);
+      const aiResult = await interpretCompatibility(p1, d1, p2, d2);
 
-      setCompResult({
+      setCompatibilityResult({
         score: aiResult.score,
         person1Data: d1,
         person2Data: d2,
         aiInterpretation: aiResult
       });
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Compatibility Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleReset = () => {
-    setResult(null);
-    setCompResult(null);
-    setLoading(false);
-  };
-
   return (
-    <div className="min-h-screen font-sans selection:bg-brand-orange/30 selection:text-brand-orange bg-brand-black text-white">
-      {loading && <LoadingScreen />}
-      
-      {!loading && !result && !compResult && (
-        <div className="min-h-screen flex flex-col relative overflow-hidden">
-          <div className="absolute inset-0 grid-bg opacity-30 pointer-events-none" />
-          
-          {/* Header Navigation */}
-          <header className="relative z-20 pt-12 px-6">
-            <div className="max-w-7xl mx-auto flex flex-col items-center gap-8">
-              <div className="flex flex-col items-center">
-                <Logo className="scale-75 md:scale-90" />
-                <div className="w-12 h-0.5 bg-brand-orange/30 mt-4 rounded-full" />
-              </div>
+    <div className="min-h-screen bg-brand-black text-[#e0e0e0] flex flex-col justify-between selection:bg-brand-gold selection:text-black">
+      {/* Background Atmosphere */}
+      <div className="fixed inset-0 grid-bg opacity-20 pointer-events-none" />
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brand-gold/10 blur-[120px] rounded-full pointer-events-none" />
 
-              <nav className="flex gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/5 subtle-glow">
-                <button 
-                  onClick={() => setMode('single')}
-                  className={`flex items-center gap-2 px-8 py-3 rounded-xl transition-all ${mode === 'single' ? 'bg-brand-orange text-black gold-glow' : 'text-white/60 hover:bg-white/5'}`}
-                >
-                  <User className="w-4 h-4" /> Cá Nhân
-                </button>
-                <button 
-                  onClick={() => setMode('compatibility')}
-                  className={`flex items-center gap-2 px-8 py-3 rounded-xl transition-all ${mode === 'compatibility' ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'text-white/60 hover:bg-white/5'}`}
-                >
-                  <Heart className="w-4 h-4" /> Hợp Tuổi
-                </button>
-              </nav>
-            </div>
-          </header>
-
-          <main className="flex-1 flex flex-col justify-center py-12">
-            {mode === 'single' ? (
-              <InputForm onStart={startAnalysis} />
-            ) : (
-              <CompatibilityForm onAnalyze={startCompatibilityAnalysis} />
-            )}
-          </main>
-          
-          <footer className="py-8 text-center border-t border-white/5 bg-brand-black/50 backdrop-blur-sm relative z-10">
-            <p className="text-white/20 text-xs tracking-widest uppercase">AI Thần Số Học © 2024 • Powered by AI Deep Numerology</p>
-          </footer>
+      {/* Main Header */}
+      <header className="relative z-30 border-b border-white/5 bg-brand-black/80 backdrop-blur-md px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="flex items-center gap-3 cursor-pointer" onClick={() => {
+          setAnalysisResult(null);
+          setCompatibilityResult(null);
+        }}>
+          <Logo className="scale-90" />
         </div>
-      )}
 
-      {!loading && result && (
-        <AnalysisResult result={result} onReset={handleReset} />
-      )}
+        {/* Mode Navigation Tabs */}
+        {!analysisResult && !compatibilityResult && (
+          <nav className="flex items-center gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10 subtle-glow">
+            <button
+              onClick={() => setMode('single')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-display text-xs uppercase tracking-wider transition-all ${
+                mode === 'single'
+                  ? 'bg-brand-gold text-black font-bold shadow-lg gold-glow'
+                  : 'text-white/60 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              Tra Cứu Bản Mệnh
+            </button>
+            <button
+              onClick={() => setMode('compatibility')}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-display text-xs uppercase tracking-wider transition-all ${
+                mode === 'compatibility'
+                  ? 'bg-rose-500 text-white font-bold shadow-lg shadow-rose-500/30'
+                  : 'text-white/60 hover:text-white hover:bg-white/5'
+              }`}
+            >
+              <Heart className="w-4 h-4" />
+              Bói Tương Hợp Tình Duyên
+            </button>
+          </nav>
+        )}
 
-      {!loading && compResult && (
-        <CompatibilityResult result={compResult} onReset={handleReset} />
-      )}
+        {(analysisResult || compatibilityResult) && (
+          <button
+            onClick={() => {
+              setAnalysisResult(null);
+              setCompatibilityResult(null);
+            }}
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white/80 hover:bg-white/10 transition-all font-display uppercase tracking-wider"
+          >
+            <RefreshCw className="w-4 h-4 text-brand-gold" />
+            Tra Cứu Khác
+          </button>
+        )}
+      </header>
+
+      {/* Main Body */}
+      <main className="relative z-10 flex-1 flex flex-col">
+        {loading ? (
+          <LoadingScreen />
+        ) : (
+          <AnimatePresence mode="wait">
+            {analysisResult ? (
+              <motion.div
+                key="analysis-result"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <AnalysisResult
+                  result={analysisResult}
+                  onReset={() => setAnalysisResult(null)}
+                />
+              </motion.div>
+            ) : compatibilityResult ? (
+              <motion.div
+                key="compatibility-result"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <CompatibilityResult
+                  result={compatibilityResult}
+                  onReset={() => setCompatibilityResult(null)}
+                />
+              </motion.div>
+            ) : mode === 'single' ? (
+              <motion.div
+                key="input-form"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="py-8"
+              >
+                <div className="text-center max-w-2xl mx-auto px-4 mb-4">
+                  <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-xs font-display tracking-widest uppercase mb-4">
+                    <Compass className="w-3.5 h-3.5" /> Thần Số Học Pythagoras & AI Nhân Tướng
+                  </span>
+                  <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-3">
+                    Khám Phá Mật Mã Bản Mệnh
+                  </h1>
+                  <p className="text-white/50 text-sm md:text-base">
+                    Nhập họ tên, ngày sinh và hình ảnh chân dung để AI luận giải chi tiết con số chủ đạo, ngũ hành bản mệnh và diện mạo nhân tướng.
+                  </p>
+                </div>
+                <InputForm onStart={handleStartAnalysis} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="compatibility-form"
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.98 }}
+                className="py-8"
+              >
+                <CompatibilityForm onAnalyze={handleAnalyzeCompatibility} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
+      </main>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-white/5 bg-black/40 py-8 px-6 text-center text-xs text-white/40 space-y-2">
+        <div className="flex justify-center items-center gap-2">
+          <Shield className="w-4 h-4 text-brand-gold/60" />
+          <span>Thần Số Học AI - Tử Vi, Ngũ Hành & Nhân Tướng Học Chuyên Sâu</span>
+        </div>
+        <p>© 2026 Hey! Si Mì - Nội dung luận giải nhằm mục đích chiêm nghiệm, thấu hiểu bản thân và nâng cao chất lượng cuộc sống.</p>
+      </footer>
     </div>
   );
 }

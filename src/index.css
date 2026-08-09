@@ -10,24 +10,23 @@
   --color-panel-dark: #0a0a0c;
   --color-panel-light: #121214;
   --color-brand-black: #121214;
-  --color-brand-gold: #f59e0b;
-  --color-brand-orange: #fb923c;
+  --color-brand-gold: #c5a059;
 }
 
 @layer base {
   body {
-    @apply bg-brand-black text-white antialiased font-sans;
+    @apply bg-brand-black text-[#e0e0e0] antialiased font-sans;
   }
 }
 
 .scan-line {
   height: 2px;
-  background: linear-gradient(to right, transparent, var(--color-brand-orange), transparent);
+  background: linear-gradient(to right, transparent, #c5a059, transparent);
   width: 100%;
   position: absolute;
   top: 0;
   animation: scan 3s linear infinite;
-  box-shadow: 0 0 15px var(--color-brand-orange);
+  box-shadow: 0 0 15px #c5a059;
 }
 
 @keyframes scan {
@@ -39,8 +38,8 @@
 
 .grid-bg {
   background-image: 
-    linear-gradient(rgba(251, 146, 60, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(251, 146, 60, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(197, 160, 89, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(197, 160, 89, 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -50,7 +49,7 @@
 }
 
 .gold-glow {
-  box-shadow: 0 0 20px rgba(251, 146, 60, 0.2);
+  box-shadow: 0 0 20px rgba(197, 160, 89, 0.2);
 }
 
 .subtle-glow {
@@ -86,22 +85,24 @@
   background-size: 200% 200%;
   animation: rainbow 5s ease infinite;
 }
-:root {
-  --color-brand-orange: #fb923c;
-  --color-brand-black: #121214;
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-4px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
 }
 
-/* Class để làm nút bấm màu cam */
-.btn-primary {
-  background-color: var(--color-brand-orange);
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 0 15px var(--color-brand-orange); /* Hiệu ứng phát sáng */
-  border: none;
-  transition: all 0.3s ease;
+@keyframes cosmic-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(197, 160, 89, 0.25)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5)); }
+  50% { filter: drop-shadow(0 0 16px rgba(197, 160, 89, 0.45)) drop-shadow(0 6px 15px rgba(0, 0, 0, 0.6)); }
 }
 
-.btn-primary:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 0 25px var(--color-brand-orange);
+.animate-cosmic-logo {
+  animation: float 6s ease-in-out infinite, cosmic-glow 4s ease-in-out infinite;
 }
+
+@keyframes soundWave {
+  0%, 100% { height: 30%; }
+  50% { height: 100%; }
+}
+

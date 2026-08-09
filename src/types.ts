@@ -5,6 +5,7 @@ export interface UserInput {
   birthDate: string; // YYYY-MM-DD
   birthHour: string;
   gender: Gender;
+  faceImage?: string; // Base64 representation of face photo
   facialFeatures?: {
     forehead: string;
     eyes: string;

@@ -2,7 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { UserInput, NumerologyData } from "../types";
 import { calculateCungPhi } from "./numerology";
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || '' });
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || '' });
 
 export async function interpretCompatibility(p1: UserInput, d1: NumerologyData, p2: UserInput, d2: NumerologyData) {
   const prompt = `
@@ -37,7 +37,7 @@ export async function interpretCompatibility(p1: UserInput, d1: NumerologyData, 
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemini-3.5-flash",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -92,7 +92,10 @@ export async function interpretNumerology(input: UserInput, data: NumerologyData
     - Nạp Âm: ${data.elementData.napAm}
     
     NHÂN TƯỚNG HỌC:
-    - Đặc điểm khuôn mặt: ${JSON.stringify(input.facialFeatures || {})}
+    ${input.faceImage 
+      ? "- THÔNG TIN QUAN TRỌNG: Người dùng đã tải lên/chụp ảnh đại diện thực tế đính kèm. Hãy nhận diện diện mạo sinh trắc (trán rộng/hẹp, mắt to/sáng/sâu, khuôn miệng cân đối/dày/mỏng, tỷ lệ tam đình và thần thái thực tế của gương mặt này) để luận đoán Nhân tướng học thực tiễn khách quan cao nhất."
+      : `- Đặc điểm khuôn mặt: ${JSON.stringify(input.facialFeatures || { forehead: "Cao, rộng", eyes: "Sáng, to", mouth: "Cân đối" })}`
+    }
 
     YÊU CẦU LUẬN GIẢI (Nội dung phải cực kỳ chi tiết, tối thiểu 1000 chữ):
     1. Tổng quan Vận mệnh: Luận giải sự kết hợp giữa Con số chủ đạo và Mệnh. 
@@ -104,7 +107,7 @@ export async function interpretNumerology(input: UserInput, data: NumerologyData
        - Màu sắc, con số, hướng tốt.
        - MỤC QUAN TRỌNG "Giải pháp Hóa giải Xung Khắc": Dựa trên ngũ hành và con số, đưa ra các gợi ý cụ thể về vật phẩm phong thủy, câu thần chú (mantra) hoặc bài tập thiền định cụ thể để chuyển hóa năng lượng tiêu cực.
 
-    4. Nhân tướng học & Vận trình: Luận giải hậu vận dựa trên Face Analysis và các đỉnh cao đời người.
+    4. Nhân tướng học & Vận trình: Luận đoán diện mạo dựa trên ảnh chân dung do người dùng cung cấp (hoặc nét đặc trưng chính). Phân tích khí chất qua ảnh đính kèm liên đới mật thiết đến Thần số học và vận số các đỉnh cao đời người.
 
     CẤU TRÚC MỖI MỤC:
     - Một đoạn tóm tắt ngắn.
@@ -126,10 +129,32 @@ export async function interpretNumerology(input: UserInput, data: NumerologyData
     }
   `;
 
+  let contentsPayload: any = prompt;
+
+  if (input.faceImage) {
+    const base64Data = input.faceImage.includes(',')
+      ? input.faceImage.split(',')[1]
+      : input.faceImage;
+
+    contentsPayload = {
+      parts: [
+        {
+          inlineData: {
+            mimeType: "image/jpeg",
+            data: base64Data
+          }
+        },
+        {
+          text: prompt
+        }
+      ]
+    };
+  }
+
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
+      model: "gemini-3.5-flash",
+      contents: contentsPayload,
       config: {
         responseMimeType: "application/json",
         responseSchema: {

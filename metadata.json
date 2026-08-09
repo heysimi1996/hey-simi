@@ -1,6 +1,10 @@
 {
-  "name": "AI Thần Số Học - Chuyên Sâu & Tối Giản",
-  "description": "Ứng dụng Thần số học AI chuyên sâu theo hệ Pythagoras, phân tích con số chủ đạo, biểu đồ ngày sinh và nhân tướng học AI.",
-  "requestFramePermissions": [],
-  "majorCapabilities": []
+  "name": "Thần Số Học AI - Tử Vi & Nhân Tướng Học",
+  "description": "Ứng dụng tra cứu Thần Số Học Pythagoras, Nhân Tướng Học AI, Ngũ Hành Bản Mệnh và Bối Toán Tương Hợp Tình Yêu.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }
