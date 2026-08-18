@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
-import { User, Heart, Sparkles, Calendar, Clock } from 'lucide-react';
+import { User, Heart, Sparkles, Calendar, Clock, BookOpen } from 'lucide-react';
 import { UserInput, Gender } from '../types';
 
 interface Props {
@@ -26,23 +26,18 @@ export function CompatibilityForm({ onAnalyze }: Props) {
 
   const renderGenderSelect = (person: UserInput, setPerson: React.Dispatch<React.SetStateAction<UserInput>>) => (
     <div className="flex gap-2">
-      {(['Nam', 'Nữ', 'LGBT+'] as Gender[]).map(g => (
+      {(['Nam', 'Nữ'] as Gender[]).map(g => (
         <button
           key={g}
           type="button"
           onClick={() => setPerson({ ...person, gender: g })}
-          className={`flex-1 py-2 text-xs rounded-lg border transition-all relative overflow-hidden ${
+          className={`flex-1 py-2 text-xs rounded-lg border transition-all ${
             person.gender === g 
-              ? g === 'LGBT+' 
-                ? 'lgbt-gradient-border text-white' 
-                : 'bg-brand-gold/10 border-brand-gold text-brand-gold' 
+              ? 'bg-brand-gold/10 border-brand-gold text-brand-gold font-bold shadow-sm' 
               : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
           }`}
         >
-           {g === 'LGBT+' && person.gender === g && (
-            <div className="absolute inset-0 animate-rainbow opacity-10 bg-gradient-to-r from-red-500 via-green-500 to-blue-500" />
-          )}
-          <span className="relative z-10">{g}</span>
+          <span>{g}</span>
         </button>
       ))}
     </div>
@@ -198,10 +193,19 @@ export function CompatibilityForm({ onAnalyze }: Props) {
         </button>
       </div>
 
-      <div className="mt-20 opacity-[0.03] text-xs max-w-4xl mx-auto space-y-4 pointer-events-none">
-        <h2>Xem tuổi vợ chồng hợp khắc năm 2024</h2>
-        <p>Phân tích chi tiết mức độ hòa hợp giữa hai người dựa trên các yếu tố phong thủy cổ truyền kết hợp thuật toán AI hiện đại. Chúng tôi xem xét Ngũ hành, Thiên can, Địa chi và Thần số học Pythagoras để đưa ra lời khuyên chính xác nhất về tình duyên và sự nghiệp khi hai người kết hợp.</p>
-        {Array(10).fill("Cách hóa giải tuyệt mệnh trong hôn nhân bằng hướng nhà và màu sắc phong thủy.").join(" ")}
+      <div id="compatibility-note-2026" className="mt-16 max-w-4xl mx-auto p-6 md:p-8 rounded-2xl bg-white/[0.04] border border-white/15 backdrop-blur-sm text-white space-y-4 shadow-xl">
+        <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+          <BookOpen className="w-5 h-5 text-brand-gold" />
+          <h2 className="text-lg md:text-xl font-display font-bold text-white uppercase tracking-wide">
+            Xem tuổi vợ chồng hợp khắc năm 2026
+          </h2>
+        </div>
+        <p className="text-white text-sm md:text-base leading-relaxed font-medium">
+          Phân tích chi tiết mức độ hòa hợp giữa hai người dựa trên các yếu tố phong thủy cổ truyền kết hợp thuật toán AI hiện đại. Chúng tôi xem xét Ngũ hành, Thiên can, Địa chi và Thần số học Pythagoras để đưa ra lời khuyên chính xác nhất về tình duyên và sự nghiệp khi hai người kết hợp.
+        </p>
+        <p className="text-white text-xs md:text-sm leading-relaxed">
+          {Array(10).fill("Cách hóa giải tuyệt mệnh trong hôn nhân bằng hướng nhà và màu sắc phong thủy.").join(" ")}
+        </p>
       </div>
     </div>
   );

@@ -33,7 +33,7 @@ export function InputForm({ onStart }: Props) {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto px-4 py-12">
+    <div className="w-full max-w-2xl mx-auto px-4 pb-12 pt-2">
       <div className="flex justify-center mb-12">
         <div className="flex gap-4">
           <div className={`w-3 h-3 rounded-full transition-all duration-500 ${step >= 1 ? 'bg-brand-gold shadow-[0_0_15px_rgba(197,160,89,0.5)]' : 'bg-white/10'}`} />
@@ -97,24 +97,19 @@ export function InputForm({ onStart }: Props) {
 
               <div className="space-y-4">
                 <label className="text-xs uppercase tracking-widest text-white/40 ml-1">Giới tính</label>
-                <div className="flex gap-3 flex-wrap">
-                  {(['Nam', 'Nữ', 'LGBT+'] as Gender[]).map(g => (
+                <div className="flex gap-3">
+                  {(['Nam', 'Nữ'] as Gender[]).map(g => (
                     <button
                       key={g}
                       type="button"
                       onClick={() => setFormData({ ...formData, gender: g })}
-                      className={`flex-1 min-w-[80px] py-3 rounded-xl border transition-all relative overflow-hidden ${
+                      className={`flex-1 py-3 rounded-xl border transition-all ${
                         formData.gender === g 
-                          ? g === 'LGBT+' 
-                            ? 'lgbt-gradient-border text-white' 
-                            : 'bg-brand-gold/10 border-brand-gold text-brand-gold' 
+                          ? 'bg-brand-gold/10 border-brand-gold text-brand-gold font-bold shadow-md' 
                           : 'bg-white/5 border-white/10 text-white/40 hover:bg-white/10'
                       }`}
                     >
-                      {g === 'LGBT+' && formData.gender === g && (
-                        <div className="absolute inset-0 animate-rainbow opacity-20 bg-gradient-to-r from-red-500 via-green-500 to-blue-500" />
-                      )}
-                      <span className="relative z-10">{g}</span>
+                      <span>{g}</span>
                     </button>
                   ))}
                 </div>
@@ -139,12 +134,17 @@ export function InputForm({ onStart }: Props) {
             className="space-y-8"
           >
             <div className="glass-panel subtle-glow p-8 space-y-8">
-              <div className="flex items-center gap-4 border-b border-white/10 pb-4">
-                <Sparkles className="w-6 h-6 text-brand-gold" />
-                <div>
-                  <h2 className="text-xl font-display font-medium">Nhân tướng học AI</h2>
-                  <p className="text-white/40 text-sm">Chụp ảnh hoặc tải lên chân dung để AI phân tích sinh trắc diện mạo</p>
+              <div className="flex items-center justify-between border-b border-white/10 pb-4 flex-wrap gap-2">
+                <div className="flex items-center gap-3">
+                  <Sparkles className="w-6 h-6 text-brand-gold" />
+                  <div>
+                    <h2 className="text-xl font-display font-medium">Nhân tướng học AI</h2>
+                    <p className="text-white/40 text-sm">Chụp ảnh hoặc tải lên chân dung để AI phân tích sinh trắc diện mạo</p>
+                  </div>
                 </div>
+                <span className="text-xs text-brand-gold/90 bg-brand-gold/10 border border-brand-gold/30 px-3 py-1 rounded-full font-medium">
+                  (Bạn có thể bỏ qua nếu không muốn xem nhân tướng học)
+                </span>
               </div>
 
               <div className="space-y-6">

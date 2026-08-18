@@ -19,11 +19,28 @@ import {
   CircleDot,
   ZapOff,
   ShieldAlert,
-  Sparkles as SparklesIcon,
+  Sparkles,
   Volume2,
-  Square
+  Square,
+  CheckCircle2,
+  AlertCircle,
+  Orbit,
+  Star,
+  Users2,
+  Share2,
+  Download
 } from 'lucide-react';
 import { Logo } from './Logo';
+import { TTSPlayer } from './TTSPlayer';
+import { ThemeToggle } from './ThemeToggle';
+import { ReadingProgressBar } from './ReadingProgressBar';
+import { AmbientSoundPlayer } from './AmbientSoundPlayer';
+import { ShareModal } from './ShareModal';
+import { ZodiacWheelMap } from './ZodiacWheelMap';
+import { EnergyMetricsBarChart } from './EnergyMetricsBarChart';
+import { ASSETS } from '../constants/assets';
+import Markdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { 
   AreaChart, 
   Area, 
@@ -35,7 +52,6 @@ import {
   CartesianGrid
 } from 'recharts';
 
-
 const Trees = (props: any) => (
   <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 10v.01"/><path d="M14 10v.01"/><path d="M10 14v.01"/><path d="M14 14v.01"/><path d="M16 8c.6 0 1.1.2 1.4.5.3.3.6.8.6 1.5 0 .2 0 .4-.1.6-.3.5-.7.8-1.5.9-.2 0-.4 0-.6-.1-.1 0-.2 0-.3-.1-.5 0-.9-.2-1.1-.4-.1-.1-.3-.3-.3-.4 0-.1-.1-.2-.1-.4-.1-.3-.1-.6-.1-1.1 0-1.1.9-2 2-2z"/><path d="M18 10c.6 0 1.1.2 1.4.5.3.3.6.8.6 1.5 0 .2 0 .4-.1.6-.3.5-.7.8-1.5.9-.2 0-.4 0-.6-.1-.1 0-.2 0-.3-.1-.5 0-.9-.2-1.1-.4-.1-.1-.3-.3-.3-.4 0-.1-.1-.2-.1-.4-.1-.3-.1-.6-.1-1.1 0-1.1.9-2 2-2z"/><path d="M14 6c.6 0 1.1.2 1.4.5.3.3.6.8.6 1.5 0 .2 0 .4-.1.6-.3.5-.7.8-1.5.9-.2 0-.4 0-.6-.1-.1 0-.2 0-.3-.1-.5 0-.9-.2-1.1-.4-.1-.1-.3-.3-.3-.4 0-.1-.1-.2-.1-.4-.1-.3-.1-.6-.1-1.1 0-1.1.9-2 2-2z"/><path d="M10 6c.6 0 1.1.2 1.4.5.3.3.6.8.6 1.5 0 .2 0 .4-.1.6-.3.5-.7.8-1.5.9-.2 0-.4 0-.6-.1-.1 0-.2 0-.3-.1-.5 0-.9-.2-1.1-.4-.1-.1-.3-.3-.3-.4 0-.1-.1-.2-.1-.4-.1-.3-.1-.6-.1-1.1 0-1.1.9-2 2-2z"/><path d="M12 22v-3"/><path d="M9 19c0-3.5 1.3-6.4 3-6.4s3 2.9 3 6.4H9z"/></svg>
 );
@@ -46,7 +62,8 @@ interface Props {
 }
 
 export function AnalysisResult({ result, onReset }: Props) {
-  const [activeTab, setActiveTab] = React.useState<'overview' | 'inner' | 'forecast' | 'face' | 'element' | 'fengshui'>('overview');
+  const [activeTab, setActiveTab] = React.useState<'overview' | 'zodiac' | 'inner' | 'forecast' | 'face' | 'element' | 'fengshui'>('overview');
+  const [isShareOpen, setIsShareOpen] = React.useState<boolean>(false);
 
   const getElementIcon = () => {
     switch (result.numerology.elementData.element) {
@@ -61,8 +78,19 @@ export function AnalysisResult({ result, onReset }: Props) {
 
   const ElementIcon = getElementIcon();
 
+  const getZodiacElementBadge = (element: string) => {
+    switch (element) {
+      case 'Lửa': return 'bg-rose-500/10 text-rose-400 border-rose-500/20';
+      case 'Đất': return 'bg-amber-500/10 text-amber-300 border-amber-500/20';
+      case 'Khí': return 'bg-sky-500/10 text-sky-300 border-sky-500/20';
+      case 'Nước': return 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20';
+      default: return 'bg-brand-gold/10 text-brand-gold border-brand-gold/20';
+    }
+  };
+
   const tabs = [
     { id: 'overview', label: 'Vận Mệnh', icon: Trophy },
+    { id: 'zodiac', label: 'Hoàng Đạo', icon: Sparkles },
     { id: 'inner', label: 'Sâu Thẳm', icon: Heart },
     { id: 'element', label: 'Bản Mệnh', icon: ElementIcon },
     { id: 'forecast', label: 'Tương Lai', icon: Map },
@@ -71,8 +99,21 @@ export function AnalysisResult({ result, onReset }: Props) {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-brand-black pb-20">
-      <div className="absolute inset-0 grid-bg opacity-20 pointer-events-none" />
+    <div className="min-h-screen bg-brand-black pb-20 relative overflow-x-hidden">
+      {/* High-res Cosmic Background Atmosphere Layer */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <img
+          src={ASSETS.background}
+          alt="Cosmic background"
+          className="w-full h-full object-cover opacity-25 filter brightness-90"
+          referrerPolicy="no-referrer"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-black/80 via-brand-black/90 to-brand-black" />
+        <div className="absolute inset-0 grid-bg opacity-15" />
+      </div>
+
+      {/* Top Reading Progress Bar */}
+      <ReadingProgressBar color="gold" showBackToTop={true} />
       
       {/* Header */}
       <header className="sticky top-0 z-30 bg-brand-black/80 backdrop-blur-md border-b border-white/5 px-6 py-4 subtle-glow">
@@ -81,33 +122,67 @@ export function AnalysisResult({ result, onReset }: Props) {
             <Logo className="scale-75 origin-center md:origin-left" />
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="hidden md:flex flex-col items-end">
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex flex-col items-end mr-1">
               <h2 className="text-white font-display font-medium text-xs leading-tight uppercase tracking-widest">{result.input.fullName}</h2>
-              <p className="text-white/40 text-[10px]">{result.input.birthDate} • {result.input.gender}</p>
+              <p className="text-white/40 text-[10px]">{result.input.birthDate} • {result.numerology.zodiacData.name} ({result.numerology.zodiacData.symbol}) • {result.input.gender}</p>
             </div>
-            <button 
-              onClick={onReset}
-              className="group flex items-center gap-3 px-5 py-2.5 bg-white/5 rounded-full hover:bg-white/10 text-white transition-all border border-white/10 subtle-glow active:scale-95"
-            >
-              <RefreshCcw className="w-4 h-4 transition-transform group-hover:rotate-180" />
-              <span className="text-[10px] uppercase tracking-[0.2em] font-display font-bold">Phân tích mới</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <AmbientSoundPlayer />
+              <button
+                type="button"
+                onClick={() => setIsShareOpen(true)}
+                className="flex items-center gap-2 px-3.5 py-2 bg-brand-gold/10 hover:bg-brand-gold/20 text-brand-gold rounded-xl border border-brand-gold/30 transition-all text-xs font-display font-bold uppercase tracking-wider shadow-sm hover:shadow-[0_0_15px_rgba(197,160,89,0.2)] active:scale-95"
+                title="Lưu ảnh thẻ bản mệnh & chia sẻ"
+              >
+                <Share2 className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Lưu & Chia Sẻ</span>
+              </button>
+              <ThemeToggle />
+              <button 
+                onClick={onReset}
+                className="group flex items-center gap-2.5 px-3.5 py-2 bg-white/5 rounded-xl hover:bg-white/10 text-white transition-all border border-white/10 subtle-glow active:scale-95 text-xs font-display font-bold uppercase tracking-wider"
+              >
+                <RefreshCcw className="w-3.5 h-3.5 transition-transform group-hover:rotate-180 text-brand-gold" />
+                <span className="hidden md:inline">Phân tích mới</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-6 mt-8">
-        {/* Quick Stats Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        {/* Quick Stats Grid - Expanded to 6 items */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
           <StatCard label="Số Chủ Đạo" value={result.numerology.lifePath} color="gold" />
           <StatCard label="Số Sứ Mệnh" value={result.numerology.destiny} color="blue" />
           <StatCard label="Số Linh Hồn" value={result.numerology.soulUrge} color="rose" />
-          <StatCard label="Năm Cá Nhân" value={result.numerology.personalYear} color="emerald" />
-          <div className="glass-panel p-4 flex flex-col items-center justify-center border-b-2 border-white/20 col-span-2 lg:col-span-1">
-            <span className="text-[10px] uppercase font-display tracking-[0.2em] opacity-60 mb-1">Bản Mệnh</span>
-            <span className="text-xl font-display font-bold text-white whitespace-nowrap">{result.numerology.elementData.element}</span>
+          
+          {/* Zodiac Quick Stat */}
+          <div 
+            onClick={() => setActiveTab('zodiac')}
+            className="glass-panel p-4 flex flex-col items-center justify-center border-b-2 border-purple-500/30 bg-purple-500/[0.03] cursor-pointer hover:bg-purple-500/[0.08] transition-all group"
+          >
+            <span className="text-[10px] uppercase font-display tracking-[0.2em] text-purple-300/70 mb-1 flex items-center gap-1">
+              <Sparkles className="w-3 h-3 text-purple-400 group-hover:rotate-45 transition-transform" /> Hoàng Đạo
+            </span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-xl text-purple-300 font-display font-bold">{result.numerology.zodiacData.symbol}</span>
+              <span className="text-sm font-display font-bold text-white whitespace-nowrap">{result.numerology.zodiacData.name}</span>
+            </div>
+            <span className="text-[9px] text-white/40 font-mono mt-0.5">Nguyên tố {result.numerology.zodiacData.element}</span>
           </div>
+
+          <div 
+            onClick={() => setActiveTab('element')}
+            className="glass-panel p-4 flex flex-col items-center justify-center border-b-2 border-amber-500/20 bg-amber-500/[0.02] cursor-pointer hover:bg-amber-500/[0.06] transition-all"
+          >
+            <span className="text-[10px] uppercase font-display tracking-[0.2em] opacity-60 mb-1">Bản Mệnh</span>
+            <span className="text-lg font-display font-bold text-white whitespace-nowrap">{result.numerology.elementData.element}</span>
+            <span className="text-[9px] text-white/40 font-mono mt-0.5 truncate max-w-[110px]">{result.numerology.elementData.napAm.split('(')[0]}</span>
+          </div>
+
+          <StatCard label="Năm Cá Nhân" value={result.numerology.personalYear} color="emerald" />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -119,14 +194,14 @@ export function AnalysisResult({ result, onReset }: Props) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-xl whitespace-nowrap transition-all duration-300 ${
+                  className={`flex items-center gap-2 px-5 py-3 rounded-xl whitespace-nowrap transition-all duration-300 ${
                     activeTab === tab.id 
                       ? 'bg-brand-gold text-black shadow-lg shadow-brand-gold/20' 
                       : 'text-white/40 hover:text-white hover:bg-white/5'
                   }`}
                 >
                   <tab.icon className="w-4 h-4" />
-                  <span className="font-display font-medium text-sm tracking-wide uppercase">{tab.label}</span>
+                  <span className="font-display font-medium text-xs tracking-wide uppercase">{tab.label}</span>
                 </button>
               ))}
             </div>
@@ -139,26 +214,163 @@ export function AnalysisResult({ result, onReset }: Props) {
               className="glass-panel p-8 min-h-[500px]"
             >
               {activeTab === 'overview' && (
-                <div className="space-y-6">
+                <div className="space-y-8">
                   <SectionTitle title="Luận Giải Tổng Quan Vận Mệnh" audioText={result.aiInterpretation.overview} />
-                  <div className="prose prose-invert max-w-none text-white/70 leading-relaxed whitespace-pre-wrap">
-                    {result.aiInterpretation.overview}
+                  <div className="prose prose-invert max-w-none text-white/80 leading-relaxed">
+                    <Markdown remarkPlugins={[remarkGfm]}>{result.aiInterpretation.overview}</Markdown>
                   </div>
-                  <div id="seo-overview-long" className="mt-8 pt-8 border-t border-white/5 opacity-[0.02] text-[10px]">
-                    Khám phá AI Thần Số Học chuyên sâu cho người mang số chủ đạo {result.numerology.lifePath}. 
-                    Phân tích bản đồ Pythagoras kết hợp dữ liệu AI thế hệ mới để tìm ra hướng đi đúng đắn nhất. 
-                    Xem thần số học online chính xác nhất cho người sinh ngày {result.input.birthDate}.
-                    {/* Placeholder for long SEO content */}
-                    {Array(20).fill("Luận giải chuyên sâu về vận mệnh và bài học cuộc đời.").join(" ")}
+
+                  {/* Recharts Bar Chart - Năng lượng con số, Năng lượng tên gọi, Trí tuệ cảm xúc */}
+                  <EnergyMetricsBarChart 
+                    numerology={result.numerology} 
+                    fullName={result.input.fullName} 
+                  />
+
+                  <div id="seo-overview-long" className="mt-8 p-5 md:p-6 rounded-2xl bg-gradient-to-br from-amber-500/15 via-brand-black to-brand-gold/10 border border-brand-gold/40 shadow-xl shadow-brand-gold/5 space-y-3">
+                    <div className="flex items-center gap-2 text-brand-gold">
+                      <Sparkles className="w-4 h-4 text-brand-gold animate-pulse" />
+                      <span className="text-xs uppercase font-display font-bold tracking-widest text-brand-gold">
+                        Ghi Chú & Chiêm Nghiệm Vận Mệnh AI
+                      </span>
+                    </div>
+                    <p className="text-sm md:text-[13px] text-amber-50/90 leading-relaxed font-normal">
+                      Khám phá AI Thần Số Học chuyên sâu cho người mang số chủ đạo <strong className="text-brand-gold font-bold">{result.numerology.lifePath}</strong>. 
+                      Phân tích bản đồ Pythagoras kết hợp dữ liệu AI thế hệ mới để tìm ra hướng đi đúng đắn nhất. 
+                      Xem thần số học online chính xác nhất cho người sinh ngày <strong className="text-brand-gold font-bold">{result.input.birthDate}</strong>.
+                      {" "}{Array(20).fill("Luận giải chuyên sâu về vận mệnh và bài học cuộc đời.").join(" ")}
+                    </p>
                   </div>
+                </div>
+              )}
+
+              {/* ZODIAC TAB */}
+              {activeTab === 'zodiac' && (
+                <div className="space-y-8">
+                  {/* Zodiac Hero Header */}
+                  <div className="p-6 md:p-8 bg-gradient-to-br from-purple-900/20 via-brand-black to-purple-950/10 rounded-2xl border border-purple-500/20 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 -mr-8 -mt-8 w-44 h-44 rounded-full bg-purple-500/5 blur-3xl pointer-events-none" />
+                    
+                    <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 relative z-10">
+                      <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+                        <div className="w-24 h-24 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex flex-col items-center justify-center shadow-lg shadow-purple-900/30 shrink-0 group-hover:scale-105 transition-transform">
+                          <span className="text-4xl leading-none">{result.numerology.zodiacData.symbol}</span>
+                          <span className="text-[10px] text-purple-300 font-mono font-bold mt-1 uppercase">{result.numerology.zodiacData.englishName}</span>
+                        </div>
+                        <div>
+                          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-2">
+                            <h3 className="text-3xl font-display font-black text-white tracking-wide">{result.numerology.zodiacData.name}</h3>
+                            <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border uppercase tracking-wider ${getZodiacElementBadge(result.numerology.zodiacData.element)}`}>
+                              Nguyên tố {result.numerology.zodiacData.element}
+                            </span>
+                          </div>
+                          <p className="text-white/60 text-xs font-mono mb-2 flex items-center justify-center md:justify-start gap-1.5">
+                            <Calendar className="w-3.5 h-3.5 text-purple-400" /> {result.numerology.zodiacData.dateRange} • Sao chiếu mệnh: <span className="text-brand-gold font-medium">{result.numerology.zodiacData.rulingPlanet}</span>
+                          </p>
+                          <p className="text-white/80 text-sm italic max-w-xl">
+                            "{result.numerology.zodiacData.motto}"
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="shrink-0 bg-white/5 border border-white/10 rounded-xl p-3 text-center md:text-right">
+                        <span className="text-[9px] uppercase tracking-widest text-white/40 block">Vị Trí Bản Đồ Sao</span>
+                        <span className="text-xs font-display font-bold text-brand-gold block mt-1">{result.numerology.zodiacData.zodiacHouse}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AI Zodiac Interpretation */}
+                  <div>
+                    <SectionTitle 
+                      title="Luận Giải Chiêm Tinh & Thần Số Đa Tầng" 
+                      audioText={result.aiInterpretation.zodiacAnalysis || result.numerology.zodiacData.summary} 
+                    />
+                    <div className="prose prose-invert max-w-none text-white/80 leading-relaxed">
+                      <Markdown remarkPlugins={[remarkGfm]}>{result.aiInterpretation.zodiacAnalysis || result.numerology.zodiacData.summary}</Markdown>
+                    </div>
+                  </div>
+
+                  {/* 4 Interactive Zodiac Dimension Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Strengths */}
+                    <div className="p-6 glass-panel border-emerald-500/20 bg-emerald-500/[0.02] space-y-4">
+                      <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-emerald-400 font-display flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Tố Chất & Siêu Năng Lực
+                      </h4>
+                      <div className="space-y-2">
+                        {result.numerology.zodiacData.strengths.map((item, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-xs text-white/80">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Challenges */}
+                    <div className="p-6 glass-panel border-rose-500/20 bg-rose-500/[0.02] space-y-4">
+                      <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-rose-400 font-display flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 text-rose-400" /> Thách Thức & Góc Khuất Cần Rèn
+                      </h4>
+                      <div className="space-y-2">
+                        {result.numerology.zodiacData.challenges.map((item, idx) => (
+                          <div key={idx} className="flex items-start gap-2 text-xs text-white/80">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-400 mt-1.5 shrink-0" />
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Compatible signs */}
+                    <div className="p-6 glass-panel border-purple-500/20 bg-purple-500/[0.02] space-y-4">
+                      <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-purple-300 font-display flex items-center gap-2">
+                        <Users2 className="w-4 h-4 text-purple-400" /> Cung Hoàng Đạo Hòa Hợp Nhất
+                      </h4>
+                      <p className="text-xs text-white/60">
+                        Những cung hoàng đạo tạo nên sự cộng hưởng tâm đầu ý hợp nhất trong tình yêu và công việc:
+                      </p>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {result.numerology.zodiacData.compatibilitySigns.map(sign => (
+                          <span key={sign} className="px-3 py-1.5 bg-purple-500/10 border border-purple-500/30 text-purple-200 rounded-lg text-xs font-medium">
+                            ✨ {sign}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Synergy Matrix */}
+                    <div className="p-6 glass-panel border-brand-gold/20 bg-brand-gold/[0.02] space-y-4">
+                      <h4 className="text-xs uppercase tracking-[0.2em] font-bold text-brand-gold font-display flex items-center gap-2">
+                        <Orbit className="w-4 h-4 text-brand-gold" /> Giao Thoa Tây Phương & Đông Phương
+                      </h4>
+                      <div className="space-y-3 text-xs">
+                        <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                          <span className="text-white/50">Cung Hoàng Đạo</span>
+                          <span className="font-bold text-white">{result.numerology.zodiacData.name} ({result.numerology.zodiacData.element})</span>
+                        </div>
+                        <div className="flex justify-between items-center pb-2 border-b border-white/5">
+                          <span className="text-white/50">Bản Mệnh Ngũ Hành</span>
+                          <span className="font-bold text-brand-gold">{result.numerology.elementData.napAm}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-white/50">Con Số Chủ Đạo</span>
+                          <span className="font-bold text-emerald-400">Số {result.numerology.lifePath} (Pythagoras)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Celestial Star Chart Map Integration */}
+                  <ZodiacWheelMap currentZodiac={result.numerology.zodiacData} className="mt-8" />
                 </div>
               )}
 
               {activeTab === 'inner' && (
                 <div className="space-y-6">
                   <SectionTitle title="Năng Lượng Nội Tại & Tử Huyệt" audioText={result.aiInterpretation.innerEnergy} />
-                  <div className="prose prose-invert max-w-none text-white/70 leading-relaxed whitespace-pre-wrap">
-                    {result.aiInterpretation.innerEnergy}
+                  <div className="prose prose-invert max-w-none text-white/80 leading-relaxed">
+                    <Markdown remarkPlugins={[remarkGfm]}>{result.aiInterpretation.innerEnergy}</Markdown>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
                     <div className="p-4 bg-white/5 rounded-xl border border-white/10">
@@ -186,8 +398,8 @@ export function AnalysisResult({ result, onReset }: Props) {
                   </div>
                   
                   <SectionTitle title="Tương Tác Bản Mệnh & Thần Số" audioText={result.aiInterpretation.elementAnalysis || result.numerology.elementData.description} />
-                  <div className="prose prose-invert max-w-none text-white/70 leading-relaxed whitespace-pre-wrap">
-                    {result.aiInterpretation.elementAnalysis || result.numerology.elementData.description}
+                  <div className="prose prose-invert max-w-none text-white/80 leading-relaxed">
+                    <Markdown remarkPlugins={[remarkGfm]}>{result.aiInterpretation.elementAnalysis || result.numerology.elementData.description}</Markdown>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -429,7 +641,7 @@ export function AnalysisResult({ result, onReset }: Props) {
                       </div>
 
                       <div className="flex flex-col items-center justify-between p-6 bg-brand-gold/[0.02] border border-brand-gold/15 rounded-2xl relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-brand-gold/[0.01] group-hover:bg-brand-gold/[0.02] transition-colors" opacity-30 />
+                        <div className="absolute inset-0 bg-brand-gold/[0.01] group-hover:bg-brand-gold/[0.02] transition-colors opacity-30" />
                         
                         <div className="text-center w-full z-10 space-y-2">
                           <span className="text-[10px] uppercase tracking-[0.25em] text-brand-gold font-bold font-display">Chiêm tinh thực tại</span>
@@ -489,8 +701,8 @@ export function AnalysisResult({ result, onReset }: Props) {
                         </div>
                       </div>
                     ) : null}
-                    <div className={`prose prose-invert max-w-none text-white/70 leading-relaxed whitespace-pre-wrap ${result.input.faceImage ? 'md:col-span-3' : 'md:col-span-5'}`}>
-                      {result.aiInterpretation.faceAnalysis}
+                    <div className={`prose prose-invert max-w-none text-white/80 leading-relaxed ${result.input.faceImage ? 'md:col-span-3' : 'md:col-span-5'}`}>
+                      <Markdown remarkPlugins={[remarkGfm]}>{result.aiInterpretation.faceAnalysis}</Markdown>
                     </div>
                   </div>
                 </div>
@@ -504,7 +716,7 @@ export function AnalysisResult({ result, onReset }: Props) {
                       <Compass className="w-20 h-20 text-brand-gold" />
                     </div>
                     <h3 className="text-sm font-display uppercase tracking-widest text-brand-gold mb-4 flex items-center gap-2">
-                       <SparklesIcon className="w-4 h-4" /> Lời khuyên phong thủy
+                       <Sparkles className="w-4 h-4" /> Lời khuyên phong thủy
                     </h3>
                     <p className="text-white/80 italic leading-relaxed relative z-10">
                       "{result.aiInterpretation.fengShui.advice}"
@@ -534,7 +746,7 @@ export function AnalysisResult({ result, onReset }: Props) {
                     </div>
                   </div>
 
-                  {/* New Section: Hóa giải Xung Khắc */}
+                  {/* Giải pháp Hóa giải Xung Khắc */}
                   <motion.div 
                     initial={{ y: 20, opacity: 0 }}
                     whileInView={{ y: 0, opacity: 1 }}
@@ -564,7 +776,7 @@ export function AnalysisResult({ result, onReset }: Props) {
                             <Sun className="w-4 h-4 text-brand-gold" /> Thiền định & Mantra
                           </h4>
                           <p className="text-white/60 text-sm leading-relaxed">
-                             Năng lượng số {result.numerology.lifePath} của bạn cần được tịnh hóa bằng bài tập thiền "Quán tưởng ánh sáng" 15 phút mỗi ngày kèm theo Mantra "Om Mani Padme Hum" để đạt được sự an lạc.
+                             Năng lượng số {result.numerology.lifePath} và cung {result.numerology.zodiacData.name} của bạn cần được tịnh hóa bằng bài tập thiền "Quán tưởng ánh sáng" 15 phút mỗi ngày kèm theo Mantra "Om Mani Padme Hum" để đạt được sự an lạc.
                           </p>
                        </div>
                     </div>
@@ -574,8 +786,34 @@ export function AnalysisResult({ result, onReset }: Props) {
             </motion.div>
           </div>
 
-          {/* Sidebar - Birth Chart */}
+          {/* Sidebar - Birth Chart & Zodiac Mini Widget */}
           <div className="w-full lg:w-96 space-y-8">
+            {/* Zodiac Mini Widget */}
+            <div className="glass-panel p-6 space-y-4 border border-purple-500/20 bg-purple-500/[0.02]">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-display font-medium text-purple-300 uppercase tracking-widest flex items-center gap-1.5">
+                  <Star className="w-3.5 h-3.5 text-purple-400" /> Cung Hoàng Đạo
+                </h3>
+                <span className={`text-[9px] uppercase font-bold px-2 py-0.5 rounded border ${getZodiacElementBadge(result.numerology.zodiacData.element)}`}>
+                  {result.numerology.zodiacData.element}
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-3xl font-display">{result.numerology.zodiacData.symbol}</span>
+                <div>
+                  <h4 className="text-sm font-display font-bold text-white">{result.numerology.zodiacData.name} ({result.numerology.zodiacData.englishName})</h4>
+                  <p className="text-[10px] text-white/40">{result.numerology.zodiacData.dateRange}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {result.numerology.zodiacData.traits.map(t => (
+                  <span key={t} className="text-[10px] px-2 py-0.5 rounded-full bg-white/5 border border-white/5 text-white/70">
+                    #{t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             <div className="glass-panel p-6 flex flex-col items-center">
               <h3 className="text-sm font-display font-medium text-white/40 uppercase tracking-widest mb-6">Biểu Đồ Ngày Sinh</h3>
               <div className="grid grid-cols-3 gap-2 w-full aspect-square">
@@ -584,7 +822,7 @@ export function AnalysisResult({ result, onReset }: Props) {
                   const num = numbers[idx];
                   return (
                     <div 
-                      key={idx}
+                      key={idx} 
                       className={`relative flex items-center justify-center rounded-lg border transition-all duration-500 ${
                         count > 0 
                           ? 'bg-brand-gold/10 border-brand-gold/30 text-brand-gold shadow-[0_0_15px_rgba(197,160,89,0.1)]' 
@@ -613,13 +851,37 @@ export function AnalysisResult({ result, onReset }: Props) {
               <h3 className="text-xs font-display font-medium text-white/40 uppercase tracking-widest">Hành động đề xuất</h3>
               <div className="space-y-4">
                  <div className="p-4 bg-brand-gold/10 border border-brand-gold/20 rounded-xl">
-                   <p className="text-brand-gold text-sm font-medium italic">"Hãy tập thói quen ghi chép lại các ý tưởng vào sáng sớm để kích hoạt năng lượng số {result.numerology.lifePath}."</p>
+                   <p className="text-brand-gold text-sm font-medium italic">"Năng lượng cung {result.numerology.zodiacData.name} và số {result.numerology.lifePath} được phát huy tối đa khi bạn giữ vững sự tự tin và kỷ luật mỗi ngày."</p>
+                 </div>
+
+                 {/* VIP Destiny Card Export Banner */}
+                 <div className="p-4 rounded-xl bg-gradient-to-br from-brand-gold/15 to-amber-500/5 border border-brand-gold/30 space-y-3">
+                   <div className="flex items-center gap-2 text-brand-gold font-display font-bold text-xs uppercase tracking-wider">
+                     <Sparkles className="w-3.5 h-3.5" /> Thẻ Bản Mệnh VIP Canvas
+                   </div>
+                   <p className="text-[11px] text-white/70 leading-relaxed">
+                     Lưu ảnh sắc nét chuẩn 9:16 Story / 4:5 Post với đầy đủ 5 chỉ số và con dấu sinh trắc học.
+                   </p>
+                   <button
+                     type="button"
+                     onClick={() => setIsShareOpen(true)}
+                     className="w-full py-2.5 rounded-lg bg-brand-gold text-black font-display font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 hover:brightness-110 shadow-md shadow-brand-gold/20 transition-all"
+                   >
+                     <Download className="w-3.5 h-3.5" /> Xuất Ảnh & Chia Sẻ
+                   </button>
                  </div>
               </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Share & Canvas Export Modal */}
+      <ShareModal
+        isOpen={isShareOpen}
+        onClose={() => setIsShareOpen(false)}
+        result={result}
+      />
     </div>
   );
 }
@@ -635,133 +897,7 @@ function StatCard({ label, value, color }: { label: string, value: number, color
   return (
     <div className={`glass-panel p-4 flex flex-col items-center justify-center border-b-2 ${colors[color]}`}>
       <span className="text-[10px] uppercase font-display tracking-[0.2em] opacity-60 mb-1">{label}</span>
-      <span className="text-3xl font-display font-bold">{value}</span>
-    </div>
-  );
-}
-
-function TTSPlayer({ text }: { text: string }) {
-  const [isPlaying, setIsPlaying] = React.useState(false);
-  const [isPaused, setIsPaused] = React.useState(false);
-
-  React.useEffect(() => {
-    return () => {
-      if (isPlaying) {
-        window.speechSynthesis?.cancel();
-      }
-    };
-  }, [isPlaying]);
-
-  const handleTogglePlay = () => {
-    if (!window.speechSynthesis) {
-      alert("Trình duyệt của bạn không hỗ trợ tính năng đọc văn bản tự động.");
-      return;
-    }
-
-    if (isPlaying) {
-      if (isPaused) {
-        window.speechSynthesis.resume();
-        setIsPaused(false);
-      } else {
-        window.speechSynthesis.pause();
-        setIsPaused(true);
-      }
-    } else {
-      window.speechSynthesis.cancel();
-      
-      const cleanedText = text
-        .replace(/[*#_`~]/g, '')
-        .replace(/-\s+/g, '')
-        .trim();
-
-      const utterance = new SpeechSynthesisUtterance(cleanedText);
-      utterance.lang = 'vi-VN';
-      utterance.rate = 0.88; // Tốc độ vừa phải
-      utterance.pitch = 0.82; // Giọng nam trầm, ấm áp
-
-      // Find Vietnamese male voice
-      const voices = window.speechSynthesis.getVoices();
-      let selectedVoice = voices.find(v => v.lang.includes('vi-VN') && (v.name.toLowerCase().includes('nam') || v.name.toLowerCase().includes('male')));
-      if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang.includes('vi-VN') && v.name.toLowerCase().includes('microsoft'));
-      }
-      if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang.includes('vi-VN'));
-      }
-      if (!selectedVoice) {
-        selectedVoice = voices.find(v => v.lang.startsWith('vi'));
-      }
-
-      if (selectedVoice) {
-        utterance.voice = selectedVoice;
-      }
-
-      utterance.onend = () => {
-        setIsPlaying(false);
-        setIsPaused(false);
-      };
-
-      utterance.onerror = () => {
-        setIsPlaying(false);
-        setIsPaused(false);
-      };
-
-      setIsPlaying(true);
-      setIsPaused(false);
-      window.speechSynthesis.speak(utterance);
-    }
-  };
-
-  const handleStop = () => {
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
-    setIsPlaying(false);
-    setIsPaused(false);
-  };
-
-  return (
-    <div className="flex items-center gap-3 bg-brand-gold/5 hover:bg-brand-gold/10 border border-brand-gold/20 hover:border-brand-gold/30 px-4 py-2 rounded-xl transition-all subtle-glow select-none">
-      <button 
-        onClick={handleTogglePlay}
-        className="flex items-center gap-2 text-xs font-display font-bold uppercase tracking-wider text-brand-gold hover:text-white transition-colors"
-        title={isPlaying ? (isPaused ? "Tiếp tục" : "Tạm dừng") : "Nghe đọc luận giải"}
-      >
-        {isPlaying && !isPaused ? (
-          <div className="flex items-center gap-1.5">
-            <div className="flex items-end gap-0.5 h-3 w-4">
-              <span className="w-0.5 bg-brand-gold rounded-full animate-[soundWave_1s_ease-in-out_infinite]" style={{ animationDelay: '0.1s', height: '60%' }} />
-              <span className="w-0.5 bg-brand-gold rounded-full animate-[soundWave_1s_ease-in-out_infinite]" style={{ animationDelay: '0.3s', height: '100%' }} />
-              <span className="w-0.5 bg-brand-gold rounded-full animate-[soundWave_1s_ease-in-out_infinite]" style={{ animationDelay: '0.2s', height: '40%' }} />
-              <span className="w-0.5 bg-brand-gold rounded-full animate-[soundWave_1s_ease-in-out_infinite]" style={{ animationDelay: '0.4s', height: '80%' }} />
-            </div>
-            <span>Đang đọc</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1.5">
-            <Volume2 className="w-3.5 h-3.5 animate-[pulse_1.5s_infinite]" />
-            <span>{isPaused ? "Bị Tạm Dừng" : "Nghe Đọc AI"}</span>
-          </div>
-        )}
-      </button>
-
-      {isPlaying && (
-        <div className="h-3 w-px bg-brand-gold/20" />
-      )}
-
-      {isPlaying && (
-        <button 
-          onClick={handleStop}
-          className="text-white/60 hover:text-rose-400 transition-colors"
-          title="Dừng đọc"
-        >
-          <Square className="w-3.5 h-3.5 fill-current" />
-        </button>
-      )}
-
-      <span className="text-[9px] text-white/40 uppercase tracking-widest hidden sm:inline font-mono">
-        {isPlaying ? (isPaused ? "Đã tạm dừng" : "Nam trầm ấm") : "Giọng nam trầm"}
-      </span>
+      <span className="text-2xl lg:text-3xl font-display font-bold">{value}</span>
     </div>
   );
 }

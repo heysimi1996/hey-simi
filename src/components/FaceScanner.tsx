@@ -7,7 +7,7 @@ interface FaceScannerProps {
 }
 
 export function FaceScanner({ image, onChange }: FaceScannerProps) {
-  const [activeTab, setActiveTab] = useState<'camera' | 'upload'>('camera');
+  const [activeTab, setActiveTab] = useState<'camera' | 'upload'>('upload');
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -26,7 +26,7 @@ export function FaceScanner({ image, onChange }: FaceScannerProps) {
   const startCamera = async () => {
     setCameraError(null);
     try {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      if (typeof navigator !== 'undefined' && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { width: 480, height: 480, facingMode: "user" },
           audio: false,
@@ -37,12 +37,10 @@ export function FaceScanner({ image, onChange }: FaceScannerProps) {
         }
       } else {
         setCameraError("Trình duyệt không hỗ trợ Camera. Hãy sử dụng tính năng tải ảnh.");
-        setActiveTab('upload');
       }
     } catch (err: any) {
-      console.error("Camera access error:", err);
-      setCameraError("Không thể truy cập camera. Vui lòng cấp quyền camera hoặc tải ảnh lên.");
-      setActiveTab('upload');
+      // Graceful error handling for permission denied or unavailable devices
+      setCameraError("Không thể truy cập camera (vui lòng cấp quyền hoặc sử dụng tính năng tải ảnh lên).");
     }
   };
 
@@ -141,7 +139,13 @@ export function FaceScanner({ image, onChange }: FaceScannerProps) {
   };
 
   return (
-    <div className="space-y-6 w-full max-w-md mx-auto">
+    <div className="space-y-4 w-full max-w-md mx-auto">
+      {/* Notice that user can skip */}
+      <div className="text-center p-2.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs text-white/70">
+        <span className="text-brand-gold font-medium">💡 Ghi chú: </span>
+        <span>Bạn có thể bỏ qua nếu không muốn xem nhân tướng học (nhấn "Bắt đầu phân tích" để tiếp tục).</span>
+      </div>
+
       {/* Sub tabs if not captured */}
       {!image && (
         <div className="flex bg-white/5 p-1 rounded-xl border border-white/5 subtle-glow">
@@ -212,13 +216,25 @@ export function FaceScanner({ image, onChange }: FaceScannerProps) {
               <div className="p-6 text-center text-white/60 space-y-3">
                 <AlertCircle className="w-8 h-8 text-rose-500 mx-auto" />
                 <p className="text-xs">{cameraError}</p>
-                <button
-                  type="button"
-                  onClick={startCamera}
-                  className="px-4 py-2 text-[10px] uppercase font-bold tracking-wider text-brand-gold bg-brand-gold/10 hover:bg-brand-gold/20 rounded-lg transition-colors border border-brand-gold/30"
-                >
-                  Thử lại
-                </button>
+                <div className="flex items-center justify-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={startCamera}
+                    className="px-4 py-2 text-[10px] uppercase font-bold tracking-wider text-brand-gold bg-brand-gold/10 hover:bg-brand-gold/20 rounded-lg transition-colors border border-brand-gold/30"
+                  >
+                    Thử lại
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCameraError(null);
+                      setActiveTab('upload');
+                    }}
+                    className="px-4 py-2 text-[10px] uppercase font-bold tracking-wider text-white/80 bg-white/10 hover:bg-white/20 rounded-lg transition-colors border border-white/20"
+                  >
+                    Tải Ảnh Lên
+                  </button>
+                </div>
               </div>
             ) : (
               <>

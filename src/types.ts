@@ -1,4 +1,4 @@
-export type Gender = 'Nam' | 'Nữ' | 'LGBT+';
+export type Gender = 'Nam' | 'Nữ';
 
 export interface UserInput {
   fullName: string;
@@ -11,6 +11,22 @@ export interface UserInput {
     eyes: string;
     mouth: string;
   };
+}
+
+export interface ZodiacData {
+  name: string; // e.g. "Bảo Bình"
+  englishName: string; // e.g. "Aquarius"
+  symbol: string; // e.g. "♒"
+  dateRange: string; // e.g. "20/01 - 18/02"
+  element: 'Lửa' | 'Đất' | 'Khí' | 'Nước';
+  rulingPlanet: string; // e.g. "Sao Thiên Vương & Sao Thổ"
+  traits: string[]; // Key characteristics
+  strengths: string[];
+  challenges: string[];
+  compatibilitySigns: string[];
+  zodiacHouse: string;
+  motto: string;
+  summary: string;
 }
 
 export interface ElementData {
@@ -33,6 +49,7 @@ export interface NumerologyData {
   personalYear: number;
   pyramids: number[];
   elementData: ElementData;
+  zodiacData: ZodiacData;
 }
 
 export interface Arrow {
@@ -68,10 +85,60 @@ export interface AnalysisResult {
     futureForecast: string;
     faceAnalysis: string;
     elementAnalysis: string;
+    zodiacAnalysis: string;
     fengShui: {
       luckyColors: string[];
       luckyNumbers: number[];
       advice: string;
     };
   };
+}
+
+export type NumerologyResult = AnalysisResult;
+
+export interface TarotCard {
+  id: number;
+  romanNumeral: string;
+  name: string; // e.g. "The Fool"
+  vietnameseName: string; // e.g. "Kẻ Khờ"
+  element: string; // e.g. "Khí"
+  planetOrSign: string; // e.g. "Sao Thiên Vương"
+  icon: string;
+  themeColor: string;
+  keywords: string[];
+  uprightKeywords: string[];
+  reversedKeywords: string[];
+  archetype: string;
+  coreMessage: string;
+  advice: string;
+}
+
+export interface TarotDailyReading {
+  card: TarotCard;
+  isReversed: boolean;
+  questionOrFocus: string;
+  userName: string;
+  drawnAt: string;
+  aiInterpretation: {
+    overviewMessage: string;
+    careerAndFinance: string;
+    loveAndRelationships: string;
+    mindAndSpirit: string;
+    actionableAdvice: string;
+    affirmation: string;
+    luckySymbol: string;
+  };
+}
+
+export interface HistoryItem {
+  id: string;
+  type: 'single' | 'compatibility' | 'tarot';
+  title: string;
+  subtitle: string;
+  tag: string;
+  timestamp: number;
+  dateFormatted: string;
+  analysisResult?: AnalysisResult;
+  compatibilityResult?: CompatibilityResult;
+  tarotReading?: TarotDailyReading;
 }

@@ -1,4 +1,4 @@
-import { Arrow, ElementData, Gender } from '../types';
+import { Arrow, ElementData, Gender, ZodiacData } from '../types';
 
 export const pythagoreanTable: Record<string, number> = {
   A: 1, J: 1, S: 1,
@@ -184,3 +184,224 @@ export function calculateElement(birthDate: string): ElementData {
     luckyDirections: res.dir
   };
 }
+
+export function calculateZodiac(birthDate: string): ZodiacData {
+  if (!birthDate) {
+    return {
+      name: 'Bạch Dương',
+      englishName: 'Aries',
+      symbol: '♈',
+      dateRange: '21/03 - 19/04',
+      element: 'Lửa',
+      rulingPlanet: 'Sao Hỏa',
+      traits: ['Tiên phong', 'Nhiệt huyết', 'Dũng cảm', 'Thẳng thắn'],
+      strengths: ['Khả năng lãnh đạo bẩm sinh', 'Dám nghĩ dám làm', 'Ý chí kiên cường'],
+      challenges: ['Nôn nóng', 'Thiếu kiên nhẫn', 'Dễ phản ứng bộc phát'],
+      compatibilitySigns: ['Sư Tử', 'Nhân Mã', 'Song Tử', 'Bảo Bình'],
+      zodiacHouse: 'Cung Nhà 1 (Cung Tiên Phong & Bản Ngã)',
+      motto: 'Tôi tiên phong, tôi kiến tạo và dẫn đầu.',
+      summary: 'Mang ngọn lửa rực cháy của cung thủ lĩnh, bạn luôn tiến về phía trước với sự quả cảm phi thường.'
+    };
+  }
+
+  const parts = birthDate.split('-').map(Number);
+  const month = parts[1] || 1;
+  const day = parts[2] || 1;
+
+  // Exact Western Astrological Sign Mapping
+  if ((month === 3 && day >= 21) || (month === 4 && day <= 19)) {
+    return {
+      name: 'Bạch Dương',
+      englishName: 'Aries',
+      symbol: '♈',
+      dateRange: '21/03 - 19/04',
+      element: 'Lửa',
+      rulingPlanet: 'Sao Hỏa (Mars)',
+      traits: ['Tiên phong', 'Nhiệt huyết', 'Dũng cảm', 'Thẳng thắn'],
+      strengths: ['Khả năng lãnh đạo bẩm sinh', 'Dám nghĩ dám làm', 'Ý chí kiên cường', 'Năng lượng hành động mạnh mẽ'],
+      challenges: ['Nôn nóng', 'Thiếu kiên nhẫn', 'Dễ bộc phát cảm xúc'],
+      compatibilitySigns: ['Sư Tử', 'Nhân Mã', 'Song Tử', 'Bảo Bình'],
+      zodiacHouse: 'Cung Nhà 1 (Bản Ngã & Sức Sống Khởi Đầu)',
+      motto: 'Tôi tiên phong, tôi dám dấn thân và khai phá.',
+      summary: 'Biểu tượng của ngọn lửa tiên phong rực cháy. Bạn mang nguồn sinh lực dồi dào, trực giác hành động nhạy bén và không bao giờ chùn bước trước thử thách.'
+    };
+  } else if ((month === 4 && day >= 20) || (month === 5 && day <= 20)) {
+    return {
+      name: 'Kim Ngưu',
+      englishName: 'Taurus',
+      symbol: '♉',
+      dateRange: '20/04 - 20/05',
+      element: 'Đất',
+      rulingPlanet: 'Sao Kim (Venus)',
+      traits: ['Kiên định', 'Thực tế', 'Đáng tin cậy', 'Trọng tình nghĩa'],
+      strengths: ['Ý chí bền bỉ phi thường', 'Tư duy tài chính sắc bén', 'Thẩm mỹ tinh tế', 'Chung thủy sâu sắc'],
+      challenges: ['Cố chấp', 'Ngại thay đổi đột ngột', 'Đôi khi quá thận trọng'],
+      compatibilitySigns: ['Xử Nữ', 'Ma Kết', 'Cự Giải', 'Song Ngư'],
+      zodiacHouse: 'Cung Nhà 2 (Giá Trị, Tài Sản & Sự Thịnh Vượng)',
+      motto: 'Tôi xây đắp giá trị bền vững và vững chãi qua năm tháng.',
+      summary: 'Hiện thân của Đất mẹ trù phú và vững vàng. Bạn xây dựng cuộc sống bằng tính kiên trì bền bỉ, thẩm mỹ tinh tế và khả năng tích lũy thịnh vượng vững chắc.'
+    };
+  } else if ((month === 5 && day >= 21) || (month === 6 && day <= 20)) {
+    return {
+      name: 'Song Tử',
+      englishName: 'Gemini',
+      symbol: '♊',
+      dateRange: '21/05 - 20/06',
+      element: 'Khí',
+      rulingPlanet: 'Sao Thủy (Mercury)',
+      traits: ['Linh hoạt', 'Thông tuệ', 'Giao tiếp xuất sắc', 'Thích nghi cao'],
+      strengths: ['Tư duy đa chiều nhanh nhạy', 'Khả năng kết nối tuyệt vời', 'Học hỏi siêu tốc', 'Hài hước hóm hỉnh'],
+      challenges: ['Dễ phân tâm', 'Cả thèm chóng chán', 'Khó duy trì năng lượng vào một việc duy nhất'],
+      compatibilitySigns: ['Thiên Bình', 'Bảo Bình', 'Bạch Dương', 'Sư Tử'],
+      zodiacHouse: 'Cung Nhà 3 (Giao Tiếp, Học Vấn & Mạng Lưới Xã Hội)',
+      motto: 'Tôi tư duy, tôi kết nối và lan tỏa tri thức.',
+      summary: 'Cơn gió thông tuệ mang nguồn năng lượng tri thức bất tận. Bạn sở hữu tài ứng biến vô song, khả năng ngôn từ cuốn hút và góc nhìn thế giới đa sắc màu.'
+    };
+  } else if ((month === 6 && day >= 21) || (month === 7 && day <= 22)) {
+    return {
+      name: 'Cự Giải',
+      englishName: 'Cancer',
+      symbol: '♋',
+      dateRange: '21/06 - 22/07',
+      element: 'Nước',
+      rulingPlanet: 'Mặt Trăng (Moon)',
+      traits: ['Giàu tình cảm', 'Trực giác thấu suốt', 'Bảo bọc', 'Nuôi dưỡng'],
+      strengths: ['Thấu cảm sâu sắc nỗi lòng người khác', 'Trực giác tâm linh nhạy bén', 'Trung thành tuyệt đối', 'Xây dựng tổ ấm chu toàn'],
+      challenges: ['Cảm xúc thất thường', 'Dễ bị tổn thương', 'Hay hoài niệm quá khứ'],
+      compatibilitySigns: ['Bọ Cạp', 'Song Ngư', 'Kim Ngưu', 'Xử Nữ'],
+      zodiacHouse: 'Cung Nhà 4 (Gia Đình, Cội Nguồn & Nền Tảng Nội Tâm)',
+      motto: 'Tôi cảm nhận sâu sắc, tôi bảo bọc và chở che yêu thương.',
+      summary: 'Dòng nước êm đềm nhưng có sức mạnh bào mòn cả đá tảng. Trực giác thiên bẩm và trái tim thấu cảm giúp bạn trở thành điểm tựa bình yên vững chãi nhất.'
+    };
+  } else if ((month === 7 && day >= 23) || (month === 8 && day <= 22)) {
+    return {
+      name: 'Sư Tử',
+      englishName: 'Leo',
+      symbol: '♌',
+      dateRange: '23/07 - 22/08',
+      element: 'Lửa',
+      rulingPlanet: 'Mặt Trời (Sun)',
+      traits: ['Khí chất vương giả', 'Tự tin', 'Hào sảng', 'Sáng tạo'],
+      strengths: ['Khí chất lãnh đạo bẩm sinh', 'Lòng hào hiệp trượng nghĩa', 'Sức hút sân khấu', 'Trái tim ấm áp chân thành'],
+      challenges: ['Cái tôi lớn', 'Thích được tán dương', 'Đôi khi áp đặt'],
+      compatibilitySigns: ['Bạch Dương', 'Nhân Mã', 'Song Tử', 'Thiên Bình'],
+      zodiacHouse: 'Cung Nhà 5 (Sáng Tạo Nghệ Thuật, Tình Yêu & Tỏa Sáng)',
+      motto: 'Tôi tỏa sáng, tôi truyền cảm hứng và vươn tới vinh quang.',
+      summary: 'Mặt Trời rạng rỡ của vòng tròn hoàng đạo. Khí chất quyền uy, sự phóng khoáng và lòng quả cảm giúp bạn luôn là tâm điểm thắp sáng mọi không gian.'
+    };
+  } else if ((month === 8 && day >= 23) || (month === 9 && day <= 22)) {
+    return {
+      name: 'Xử Nữ',
+      englishName: 'Virgo',
+      symbol: '♍',
+      dateRange: '23/08 - 22/09',
+      element: 'Đất',
+      rulingPlanet: 'Sao Thủy (Mercury)',
+      traits: ['Tỉ mỉ', 'Chu đáo', 'Thực tế', 'Logic sắc sảo'],
+      strengths: ['Khả năng phân tích chi tiết đỉnh cao', 'Tinh thần phụng sự tận tụy', 'Kỷ luật và nguyên tắc', 'Tổ chức công việc bài bản'],
+      challenges: ['Quá cầu toàn', 'Hay tự phê bình bản thân', 'Lo âu thái quá'],
+      compatibilitySigns: ['Kim Ngưu', 'Ma Kết', 'Cự Giải', 'Bọ Cạp'],
+      zodiacHouse: 'Cung Nhà 6 (Sức Khỏe, Công Việc Tinh Hoa & Phụng Sự)',
+      motto: 'Tôi hoàn thiện từng chi tiết để đạt tới sự tinh hoa tối thượng.',
+      summary: 'Khối óc logic sắc sảo với tâm hồn phụng sự thuần khiết. Bạn nhìn thấy những chi tiết mà người khác bỏ qua và biến sự hỗn loạn thành trật tự hoàn hảo.'
+    };
+  } else if ((month === 9 && day >= 23) || (month === 10 && day <= 22)) {
+    return {
+      name: 'Thiên Bình',
+      englishName: 'Libra',
+      symbol: '♎',
+      dateRange: '23/09 - 22/10',
+      element: 'Khí',
+      rulingPlanet: 'Sao Kim (Venus)',
+      traits: ['Cân bằng', 'Duyên dáng', 'Hòa nhã', 'Công bằng'],
+      strengths: ['Nghệ thuật ngoại giao hòa giải', 'Gu thẩm mỹ đỉnh cao', 'Tư duy công lý khách quan', 'Thu hút duyên dáng'],
+      challenges: ['Do dự khó quyết định', 'Ngại xung đột đối đầu', 'Dễ chiều lòng người khác quá mức'],
+      compatibilitySigns: ['Song Tử', 'Bảo Bình', 'Sư Tử', 'Nhân Mã'],
+      zodiacHouse: 'Cung Nhà 7 (Hôn Nhân, Hợp Tác & Quan Hệ Bình Đẳng)',
+      motto: 'Tôi tạo lập sự hài hòa, công bằng và vẻ đẹp chân thiện mỹ.',
+      summary: 'Hiện thân của cán cân công lý và nét duyên hòa nhã. Bạn là sứ giả của hòa bình, luôn kiến tạo sự gắn kết và mang cái đẹp lan tỏa muôn nơi.'
+    };
+  } else if ((month === 10 && day >= 23) || (month === 11 && day <= 21)) {
+    return {
+      name: 'Bọ Cạp',
+      englishName: 'Scorpio',
+      symbol: '♏',
+      dateRange: '23/10 - 21/11',
+      element: 'Nước',
+      rulingPlanet: 'Sao Diêm Vương (Pluto) & Sao Hỏa',
+      traits: ['Bí ẩn', 'Nội lực thâm sâu', 'Quyết đoán', 'Trực giác sắc bén'],
+      strengths: ['Ý chí sinh tồn và tái sinh phi thường', 'Nhìn thấu tâm can người khác', 'Chung thủy sắt son', 'Khả năng tập trung tuyệt đối'],
+      challenges: ['Đa nghi', 'Khó mở lòng tha thứ', 'Kiểm soát cao'],
+      compatibilitySigns: ['Cự Giải', 'Song Ngư', 'Xử Nữ', 'Ma Kết'],
+      zodiacHouse: 'Cung Nhà 8 (Tái Sinh, Chiều Sâu Tâm Thức & Năng Lượng Ẩn)',
+      motto: 'Tôi chuyển hóa qua bão giông để tái sinh mạnh mẽ hơn.',
+      summary: 'Dòng nước ngầm sâu thẳm ẩn chứa sức mạnh tái sinh bất diệt. Trực giác thấu thị và ý chí gang thép giúp bạn vượt qua mọi tro tàn để vươn lên đỉnh cao.'
+    };
+  } else if ((month === 11 && day >= 22) || (month === 12 && day <= 21)) {
+    return {
+      name: 'Nhân Mã',
+      englishName: 'Sagittarius',
+      symbol: '♐',
+      dateRange: '22/11 - 21/12',
+      element: 'Lửa',
+      rulingPlanet: 'Sao Mộc (Jupiter)',
+      traits: ['Phóng khoáng', 'Lạc quan', 'Tự do', 'Triết lý'],
+      strengths: ['Tầm nhìn chiến lược vĩ mô', 'Tinh thần khám phá không giới hạn', 'Tâm hồn chân thật hào phóng', 'May mắn và tươi vui'],
+      challenges: ['Thẳng tính thiếu tế nhị', 'Thiếu kiên nhẫn với chi tiết nhỏ', 'Ghét bị ràng buộc'],
+      compatibilitySigns: ['Bạch Dương', 'Sư Tử', 'Thiên Bình', 'Bảo Bình'],
+      zodiacHouse: 'Cung Nhà 9 (Triết Học, Tầm Nhìn Thế Giới & Khát Vọng Tự Do)',
+      motto: 'Tôi mở rộng giới hạn tri thức và vươn tới chân trời tự do.',
+      summary: 'Mũi tên lửa hướng thẳng tới những chân trời mới. Năng lượng lạc quan vô tận và triết lý sống tự do giúp bạn luôn là nguồn cảm hứng sống cho mọi người.'
+    };
+  } else if ((month === 12 && day >= 22) || (month === 1 && day <= 19)) {
+    return {
+      name: 'Ma Kết',
+      englishName: 'Capricorn',
+      symbol: '♑',
+      dateRange: '22/12 - 19/01',
+      element: 'Đất',
+      rulingPlanet: 'Sao Thổ (Saturn)',
+      traits: ['Kỷ luật', 'Tham vọng', 'Kiên trì', 'Trách nhiệm'],
+      strengths: ['Ý chí leo núi bền bỉ chinh phục đỉnh cao', 'Khả năng quản trị tổ chức', 'Thực tế đáng tin cậy', 'Tầm nhìn dài hạn'],
+      challenges: ['Nghiêm khắc', 'Khó bộc lộ cảm xúc mềm mỏng', 'Dễ ôm đồm gánh nặng'],
+      compatibilitySigns: ['Kim Ngưu', 'Xử Nữ', 'Bọ Cạp', 'Song Ngư'],
+      zodiacHouse: 'Cung Nhà 10 (Sự Nghiệp, Danh Tiếng & Địa Vị Xã Hội)',
+      motto: 'Tôi kiên trì kiến tạo di sản và leo lên đỉnh vinh quang.',
+      summary: 'Bậc thầy của sự kiên định và kỷ luật thép. Bạn từng bước xây dựng đế chế sự nghiệp của đời mình với nền móng vững chắc không gì có thể lay chuyển.'
+    };
+  } else if ((month === 1 && day >= 20) || (month === 2 && day <= 18)) {
+    return {
+      name: 'Bảo Bình',
+      englishName: 'Aquarius',
+      symbol: '♒',
+      dateRange: '20/01 - 18/02',
+      element: 'Khí',
+      rulingPlanet: 'Sao Thiên Vương (Uranus) & Sao Thổ',
+      traits: ['Độc đáo', 'Nhân đạo', 'Tư duy tương lai', 'Tự do'],
+      strengths: ['Tư duy đột phá vượt thời đại', 'Tấm lòng nhân ái vì cộng đồng', 'Khách quan khoa học', 'Độc lập tư tưởng'],
+      challenges: ['Khó đoán', 'Đôi khi xa cách về cảm xúc', 'Cực đoan với quan điểm riêng'],
+      compatibilitySigns: ['Song Tử', 'Thiên Bình', 'Bạch Dương', 'Nhân Mã'],
+      zodiacHouse: 'Cung Nhà 11 (Cộng Đồng, Lý Tưởng Tương Lai & Đột Phá Mới)',
+      motto: 'Tôi đổi mới, tôi phá vỡ giới hạn và hướng về tương lai.',
+      summary: 'Kẻ mang nước tưới mát cho tư duy nhân loại. Bộ não đi trước thời đại và trái tim bác ái giúp bạn mở ra những con đường khai phóng đầy bất ngờ.'
+    };
+  } else {
+    // 19/02 - 20/03
+    return {
+      name: 'Song Ngư',
+      englishName: 'Pisces',
+      symbol: '♓',
+      dateRange: '19/02 - 20/03',
+      element: 'Nước',
+      rulingPlanet: 'Sao Hải Vương (Neptune) & Sao Mộc',
+      traits: ['Thấu cảm', 'Lãng mạn', 'Trực giác tâm linh', 'Vị tha'],
+      strengths: ['Trực giác tâm linh thấu thị', 'Trí tưởng tượng nghệ thuật vô biên', 'Lòng từ bi chữa lành', 'Thích ứng linh hoạt'],
+      challenges: ['Dễ mơ mộng xa rời thực tế', 'Dễ bị ảnh hưởng bởi năng lượng xấu', 'Thiếu ranh giới bảo vệ bản thân'],
+      compatibilitySigns: ['Cự Giải', 'Bọ Cạp', 'Kim Ngưu', 'Ma Kết'],
+      zodiacHouse: 'Cung Nhà 12 (Tâm Linh Bí Ẩn, Tiềm Thức & Trực Giác Tối Hậu)',
+      motto: 'Tôi thấu hiểu bằng trái tim từ bi và hòa vào dòng chảy vũ trụ.',
+      summary: 'Đại dương bao la của trực giác và tình thương thuần khiết. Bạn sở hữu tâm hồn nghệ sĩ phiêu lãng và khả năng chữa lành tâm can kỳ diệu.'
+    };
+  }
+}
+

@@ -14,8 +14,13 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
   body {
-    @apply bg-brand-black text-[#e0e0e0] antialiased font-sans;
+    @apply bg-brand-black text-[#e0e0e0] antialiased font-sans transition-colors duration-300;
   }
 }
 
@@ -44,7 +49,7 @@
 }
 
 .glass-panel {
-  @apply bg-white/[0.03] border border-white/10 backdrop-blur-xl rounded-2xl;
+  @apply bg-white/[0.03] border border-white/10 backdrop-blur-xl rounded-2xl transition-all duration-300;
   box-shadow: 0 4px 24px -1px rgba(0, 0, 0, 0.4);
 }
 
@@ -56,34 +61,17 @@
   box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
 }
 
-.lgbt-gradient-border {
-  background: linear-gradient(#121214, #121214) padding-box,
-              linear-gradient(to right, #ff0000, #ff8700, #ffd300, #deff0a, #a1ff0a, #0aff99, #0aefff, #147df5, #580aff, #be0aff) border-box;
-  border: 2px solid transparent;
-}
-
 .logo-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
 }
 
 .logo-container img {
-    max-width: 100%;
-    height: auto;
-    filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
-}
-
-@keyframes rainbow {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-rainbow {
-  background-size: 200% 200%;
-  animation: rainbow 5s ease infinite;
+  max-width: 100%;
+  height: auto;
+  filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.1));
 }
 
 @keyframes float {
@@ -106,3 +94,329 @@
   50% { height: 100%; }
 }
 
+/* ==========================================================================
+   LIGHT THEME MODE (CHẾ ĐỘ SÁNG) - TƯƠNG PHẢN CAO, NỀN SÁNG CHỮ TỐI NỔI BẬT
+   ========================================================================== */
+
+html.light,
+html.light body,
+.light body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+.light .bg-brand-black {
+  background-color: #f8fafc !important;
+}
+
+.light .grid-bg {
+  background-image: 
+    linear-gradient(rgba(197, 160, 89, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(197, 160, 89, 0.15) 1px, transparent 1px) !important;
+}
+
+/* Glass Panels & Containers */
+.light .glass-panel {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: rgba(203, 213, 225, 0.85) !important;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.07), 0 2px 6px -1px rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+}
+
+.light .subtle-glow {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.light .gold-glow {
+  box-shadow: 0 4px 20px rgba(197, 160, 89, 0.3) !important;
+}
+
+/* Header and Footer */
+.light header {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  border-color: rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+.light footer {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+  color: #475569 !important;
+}
+
+.light footer span,
+.light footer p {
+  color: #475569 !important;
+}
+
+/* Text Contrast Overrides for Light Mode */
+.light h1,
+.light h2,
+.light h3,
+.light h4,
+.light h5,
+.light h6 {
+  color: #0f172a !important;
+}
+
+.light .text-white {
+  color: #0f172a !important;
+}
+
+.light .text-white\/90,
+.light .text-white\/80 {
+  color: #1e293b !important;
+}
+
+.light .text-white\/70,
+.light .text-white\/60 {
+  color: #334155 !important;
+}
+
+.light .text-white\/50,
+.light .text-white\/40 {
+  color: #475569 !important;
+}
+
+.light .text-white\/30,
+.light .text-white\/20 {
+  color: #64748b !important;
+}
+
+.light .text-white\/10 {
+  color: #94a3b8 !important;
+}
+
+/* Background Opacity Overrides */
+.light .bg-white\/5 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+.light .bg-white\/10 {
+  background-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+.light .bg-white\/15 {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.light .bg-white\/20 {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+
+.light .bg-white\/\[0\.01\],
+.light .bg-white\/\[0\.02\],
+.light .bg-white\/\[0\.03\],
+.light .bg-white\/\[0\.04\],
+.light .bg-white\/\[0\.08\] {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+}
+
+.light .border-white\/5,
+.light .border-white\/10,
+.light .border-white\/15,
+.light .border-white\/20 {
+  border-color: rgba(203, 213, 225, 0.85) !important;
+}
+
+.light .bg-black\/40,
+.light .bg-black\/50,
+.light .bg-black\/60,
+.light .bg-black\/80,
+.light .bg-black\/90,
+.light .bg-black {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Form Controls */
+.light input,
+.light select,
+.light textarea {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  color-scheme: light !important;
+}
+
+.light input::placeholder,
+.light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.light select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Markdown / Prose */
+.light .prose-invert {
+  --tw-prose-body: #334155;
+  --tw-prose-headings: #0f172a;
+  --tw-prose-lead: #475569;
+  --tw-prose-links: #b45309;
+  --tw-prose-bold: #0f172a;
+  --tw-prose-counters: #64748b;
+  --tw-prose-bullets: #94a3b8;
+  --tw-prose-hr: #e2e8f0;
+  --tw-prose-quotes: #0f172a;
+  --tw-prose-quote-borders: #cbd5e1;
+  --tw-prose-captions: #64748b;
+  --tw-prose-code: #0f172a;
+  --tw-prose-pre-code: #e2e8f0;
+  --tw-prose-pre-bg: #1e293b;
+  --tw-prose-th-borders: #cbd5e1;
+  --tw-prose-td-borders: #e2e8f0;
+  color: #334155 !important;
+}
+
+.light .prose-invert strong,
+.light .prose-invert h1,
+.light .prose-invert h2,
+.light .prose-invert h3,
+.light .prose-invert h4,
+.light .prose-invert p,
+.light .prose-invert li,
+.light .prose-invert span {
+  color: #1e293b !important;
+}
+
+.light .prose-invert strong,
+.light .prose-invert h1,
+.light .prose-invert h2,
+.light .prose-invert h3,
+.light .prose-invert h4 {
+  color: #0f172a !important;
+}
+
+/* Colored Accents & Badges in Light Mode */
+.light .text-purple-200 { color: #581c87 !important; }
+.light .text-purple-300 { color: #6b21a8 !important; }
+.light .text-purple-400 { color: #7e22ce !important; }
+.light .text-emerald-400 { color: #047857 !important; }
+.light .text-rose-400 { color: #be123c !important; }
+.light .text-amber-300,
+.light .text-amber-400 { color: #b45309 !important; }
+.light .text-sky-300 { color: #0369a1 !important; }
+.light .text-cyan-300 { color: #0e7490 !important; }
+.light .text-blue-500 { color: #1d4ed8 !important; }
+.light .text-rose-500 { color: #e11d48 !important; }
+
+/* SEO Ghi chú box in Light Mode */
+.light #seo-overview-long {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), #ffffff, rgba(197, 160, 89, 0.15)) !important;
+  border-color: rgba(197, 160, 89, 0.5) !important;
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.1) !important;
+}
+
+.light #seo-overview-long p {
+  color: #1e293b !important;
+}
+
+/* Intro Notice Guide */
+.light #intro-numerology-guide > div {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(254, 249, 235, 0.95)) !important;
+  border-color: rgba(197, 160, 89, 0.4) !important;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Navigation tabs in Light mode */
+.light nav button:not(.bg-brand-gold):not(.bg-rose-500):not(.bg-gradient-to-r) {
+  color: #475569 !important;
+}
+
+.light nav button:not(.bg-brand-gold):not(.bg-rose-500):not(.bg-gradient-to-r):hover {
+  color: #0f172a !important;
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Recharts in Light Mode */
+.light .recharts-cartesian-axis-tick text {
+  fill: #475569 !important;
+}
+
+.light .recharts-cartesian-grid line {
+  stroke: rgba(0, 0, 0, 0.08) !important;
+}
+
+.light .recharts-reference-line-line {
+  stroke: #e11d48 !important;
+}
+
+/* Markdown Tables Styling */
+.prose table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.5rem 0;
+  border-radius: 0.875rem;
+  overflow: hidden;
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  background-color: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+}
+
+.prose th {
+  background-color: rgba(197, 160, 89, 0.12);
+  color: #c5a059;
+  font-family: var(--font-display, sans-serif);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+  text-align: left;
+}
+
+.prose td {
+  padding: 0.875rem 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
+  vertical-align: top;
+}
+
+.prose tr:last-child td {
+  border-bottom: none;
+}
+
+.prose tr:nth-child(even) td {
+  background-color: rgba(255, 255, 255, 0.015);
+}
+
+.prose tr:hover td {
+  background-color: rgba(197, 160, 89, 0.06);
+}
+
+.light .prose table {
+  background-color: #ffffff;
+  border-color: rgba(203, 213, 225, 0.9);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.light .prose th {
+  background-color: #f1f5f9;
+  color: #0f172a;
+  border-bottom-color: #cbd5e1;
+}
+
+.light .prose td {
+  border-bottom-color: #e2e8f0;
+  color: #334155;
+}
+
+.light .prose tr:nth-child(even) td {
+  background-color: #f8fafc;
+}
+
+.light .prose tr:hover td {
+  background-color: #f1f5f9;
+}
+
+/* Custom glow effects for light mode */
+.light .animate-cosmic-logo {
+  animation: float 6s ease-in-out infinite;
+  filter: drop-shadow(0 4px 12px rgba(197, 160, 89, 0.4)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
